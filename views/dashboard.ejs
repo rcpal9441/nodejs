@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<% include head.ejs %>
+<body>
+	<section class="containerinner">
+			<% include header.ejs %>
+	<div style="width:100%;">
+	<% include left-menu.ejs %>
+		<div class="content">
+		<div class="welcome">Welcome <%=sess_data.admin_email%></div>
+			<div class="content-container">
+				<div class="contenthead">Rashifal Program Dashboard</div>
+				<div class="contentmain2">
+				Use the menu on the left to view various Rashifal Program Controls.
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</section>
+	<% include footer.ejs %>
+</body>
+</html>

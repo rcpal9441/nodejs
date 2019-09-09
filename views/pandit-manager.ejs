@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+    <% include head.ejs %>
+    <body>
+        <section class="containerinner">
+            <% include header.ejs %>
+            <div style="width:100%;">
+                <% include left-menu.ejs %>
+                <div class="content">
+                    <div class="welcome">Pandit Manager <div class="contenthead2" ><a href="pandit-add" style="color:#FFFFFF;" > + Add Pandit</a></div>
+                    </div>
+                    <div id='searchForm'>      
+                      
+                <% if(success){ %>  
+                 <p style="text-align: center;color:green;font-weight:bold;"><%=success%></p>
+                <% } %>       
+                    </div>        
+                    <div class="content-container" id="vdoList">
+                        <div class="contentmain">
+                            <div class="table-responsive">
+                                <table id="mytab" class="display" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="highlight">S.No.</th>
+											<th class="highlight">Image</th>
+											<th class="highlight">Pandit</th>
+											<th class="highlight">Created Date</th>
+                                            <th class="highlight">Status</th>
+											<th class="highlight">Edit</th>	
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%
+                                        if(data.length>0){
+                                       let i=1; data.forEach(function(vds){
+										%>
+										<tr>
+											<td><%=i++ %></td>
+											<td style='word-break: break-all;'><img title="<%=vds.name %>" src="<%=base_url+'img/'+vds.image_path%>" alt="<%=vds.name%>" style="max-height: 80px;max-width: 80px;"></td>
+											<td style='word-break: break-all; text-align:left;'><%=vds.name%></td>
+											<td style='word-break: break-all; '><%=moment(vds.created_at).format('DD MMM, YYYY')%></td>
+											<td><%=vds.status=='1' ? 'Active' : 'In active'%></td>							
+											<td>
+											<a href='pandit-edit?pandit_id=<%=vds._id%>'>
+                                            	<img title="Update Pandit" src="img/edit-icon.png" alt="Edit" width="18">
+                                            </a>
+											</td>						
+										</tr>
+										<% }); } %>
+                                    </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+<% include footer.ejs %>
+    </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Rashifal | Add/Edit Kundli</title>
+  <link rel="stylesheet" href="<%= base_url %>css/ztracker.css">
+  <link rel="stylesheet" href="<%= base_url %>css/grid.css">
+	<link rel="stylesheet" type="text/css" href="<%= base_url %>media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="<%= base_url %>media/css/demo.css">
+	<link rel="shortcut icon" type="image/png" href="<%= base_url %>img/favicon.ico"/>
+	<script type="text/javascript" language="javascript" src="%= base_url %>imedia/js/jquery.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	<script type="text/javascript" language="javascript" src="<%= base_url %>media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="<%= base_url %>js/ckeditor/ckeditor.js"></script>
+    <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script type="text/javascript" language="javascript" class="init">
+    $(document).ready(function() {
+		$( "#created_date" ).datepicker( {
+			showAnim:'slideDown', 
+			dateFormat: 'yy-mm-dd',
+			showOn: "both",
+			defaultDate: +7,
+			buttonImage: "img/calendar.gif",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true } );
+    });
+    function validateFileUpload(field_name) {
+		var MAX_SIZE =1000000;
+		var fuData = document.getElementById(field_name);
+		var FileUploadPath = fuData.value;
+		if (FileUploadPath == '') {
+		    return '2';
+		} else {
+		    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+		    if (Extension == "gif" || Extension == "png" || Extension == "jpeg" || Extension == "jpg") {
+		            if (fuData.files && fuData.files[0]) {
+		                var size = fuData.files[0].size;
+		                if(size > MAX_SIZE){
+		                    return '4';
+		                }
+		            }
+		    } 
+		else {
+		        
+		        return '3';
+		    }
+		}
+		return '1';
+		}
+		function validate()
+		{
+			if($('#pandit_id').val() == ''){
+			 	alert('Please select pandit.');
+			 	$('#pandit_id').focus();
+			 	return false;
+			}if($('#rashi_id').val() == ''){
+			 	alert('Please select rashi.');
+			 	$('#rashi_id').focus();
+			 	return false;
+			}if($('#kundli_heading').val() == ''){
+			 	alert('Please enter kundli heading.');
+			 	$('#kundli_heading').focus();
+			 	return false;
+			}if(!CKEDITOR.instances['rashi_desc'].getData().replace(/<[^>]*>/gi, '').length){
+			 	alert('Please enter rashi description.');
+			 	$('#rashi_desc').focus();
+			 	return false;
+			}if(!CKEDITOR.instances['rashi_content'].getData().replace(/<[^>]*>/gi, '').length){
+			 	alert('Please enter content for rashi.');
+			 	$('#rashi_content').focus();
+			 	return false;
+			}
+			
+			return true;
+		}
+	</script>
+</head>
+<body>
+<section class="containerinner">
+	<% include header.ejs %>
+	<div style="width:100%;">
+		<% include left-menu.ejs %>
+		<div class="content">
+			<div class="welcome"><?php if(!empty($_GET['kundli_id'])){echo 'Edit';}else{echo 'Add';}?> Kundli <div class="contenthead2" ><a href="kundli-manager.php" style="color:#FFFFFF;" > View Kundli Manager</a></div></div>
+			<div id='searchForm'>
+			<div style="text-align:center; color:green; font-weight:bold;">
+				
+			</div>
+			   <form name="search" method="post" action="" onSubmit="return validate();" enctype="multipart/form-data">
+			   <?php if(!empty($_GET['kundli_id'])){?><input type="hidden" name="kundli_id" value="<?php echo $_GET['kundli_id'];?>"/><?php }?>
+					<div id='TextBoxesGroup'>
+					<table style='margin:15px;width:80%'>
+						<tr>
+							<td>Select Pandit <span style="color:red;">*</span> :	</td>
+							<td><select name="pandit_id" id="pandit_id">
+							<option value="">-Select-</option>
+							<?php foreach($pandit_list as $pandit){?>
+							<option value="<?php echo $pandit['id']; ?>" <?php if($pandit['id']==$pandit_id){?>selected=""<?php }?>><?php echo $pandit['pandit_name']; ?></option>
+							<?php }?>
+							</select></td>
+						</tr>
+						<tr>
+							<td>Select Rashi <span style="color:red;">*</span> :	</td>
+							<td><select name="rashi_id" id="rashi_id">
+							<option value="">-Select-</option>
+							<?php foreach($rashi_list as $rashi){?>
+							<option value="<?php echo $rashi['id']; ?>" <?php if($rashi['id']==$rashi_id){?>selected=""<?php }?>><?php echo $rashi['rashi_title']; ?></option>
+							<?php }?>
+							</select></td>
+						</tr>
+						<tr>
+							<td>Kundli Heading <span style="color:red;">*</span> :	</td>
+							<td><input type='text' required name='kundli_heading' id='kundli_heading' value='<?php echo $kundli_heading;?>'></td>
+						</tr>
+						<tr>
+							<td>Kundli Date <span style="color:red;">*</span> :	</td>
+							<td><input type='text' readonly required name='created_date' id='created_date' value='<?php echo $created_date;?>' autocomplete="off"></td>
+						</tr>					
+                        <tr>
+                            <td valign="top">Description of the rashi <span style="color:red;">*</span> :	</td>
+                            <td><textarea rows="" cols="50" name="rashi_desc" id="rashi_desc"><?php echo $rashi_desc;?></textarea></td>
+                        </tr>
+                        <tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					    </tr>
+                        <tr>
+                            <td valign="top">Content for the rashi <span style="color:red;">*</span> :	</td>
+                            <td><textarea rows="" cols="" name="rashi_content" id="rashi_content"><?php echo $rashi_content;?></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>Status <span style="color:red;">*</span> :	</td>
+                            <td><select name="kundli_status" id="kundli_status">
+                            <option value="1" <?php if($kundli_status==1){?>selected=""<?php }?>>Enabled</option>
+                            <option value="2" <?php if($kundli_status==2){?>selected=""<?php }?>>Disabled</option>
+                            </select></td>
+                        </tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<input type='submit' name='submit' id='submit' value='Submit'>	
+						</td>
+					</tr>
+				</table></div>
+			  </form>
+           </div>
+		</div>
+	</div>
+	</section>
+	<% include footer.ejs %>
+	<script type="text/javascript">
+	CKEDITOR.replace( 'rashi_desc' );
+	CKEDITOR.replace( 'rashi_content' );
+	CKEDITOR.config.width = '100%';
+	CKEDITOR.config.extraPlugins = 'panelbutton';
+	CKEDITOR.config.extraPlugins = 'dialog';
+	CKEDITOR.config.extraPlugins = 'colordialog';
+	CKEDITOR.config.extraPlugins = 'colorbutton';
+	CKEDITOR.config.allowedContent = true;
+	</script>
+</body>
+</html>

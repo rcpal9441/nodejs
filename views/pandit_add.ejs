@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<% include head.ejs %>
+
+<script type="text/javascript" language="javascript" class="init">
+    function validateFileUpload(field_name) {
+		var MAX_SIZE =1000000;
+		var fuData = document.getElementById(field_name);
+		var FileUploadPath = fuData.value;
+		if (FileUploadPath == '') {
+		    return '2';
+		} else {
+		    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+		    if (Extension == "gif" || Extension == "png" || Extension == "jpeg" || Extension == "jpg") {
+		            if (fuData.files && fuData.files[0]) {
+		                var size = fuData.files[0].size;
+		                if(size > MAX_SIZE){
+		                    return '4';
+		                }
+		            }
+		    } 
+		else {
+		        
+		        return '3';
+		    }
+		}
+		return '1';
+		}
+		function validate()
+		{
+			var rashi_title = $('#rashi_title').val();
+			
+			if(rashi_title == ''){
+			 	alert('Please enter rashi title.');
+			 	return false;
+			}
+			if(document.getElementById('image_path').value!= ''){
+    			var image_name = validateFileUpload('image_path');
+    			if(image_name==3){
+    				alert("Allowed file types are GIF, PNG, JPG and JPEG.");
+    				$('#image_path').focus();
+    				return false;
+    			}else if(image_name==4){
+    				alert("File size must be less than 1000KB");
+    				$('#image_path').focus();
+    				return false;
+    			}
+			}
+			return true;
+		}
+	</script>
+<body>
+<section class="containerinner">
+	<% include header %>
+	<div style="width:100%;">
+		<% include left-menu %>
+		<div class="content">
+			<div class="welcome"><% if(typeof query.pandit_id!=='undefined'){%> Edit <% }else{ %>Add <%}%> Pandit <div class="contenthead2" ><a href="pandit" style="color:#FFFFFF;" > View Pandit Manager</a></div></div>
+			<div id='searchForm'>
+				<% if(error.length){ %>
+                <div style="color: red;">
+               <%  error.forEach(function(el,ind){ %>
+                 <br/><%=el.msg %><br/>
+
+                <% });%>
+                </div>
+               <%  } %>
+			<div style="text-align:center; color:green; font-weight:bold;">
+				<% if(query.msg==1 && query.pandit_id!==0){ %>
+						<br/>Pandit updated successfully.<br/>
+				<%	}else if(query.msg==1 && query.rashi_id==0){ %>
+					    <br/>Pandit added successfully.<br/>
+                   <% } %>
+			</div>
+			   <form name="search" method="post" action="panditPost" onSubmit="return validate();" enctype="multipart/form-data">
+			   <% if(typeof query.pandit_id!=='undefined'){%><input type="hidden" name="pandit_id" value="<%= query.pandit_id %>"/><% }%>
+					<div id='TextBoxesGroup'>
+					<table style='margin:15px;width:80%;'>
+						<tr>
+							<td>Pandit Name <span style="color:red;">*</span> :	</td>
+							<td><input type='text' name='pandit_name' id='pandit_name' value="<%=data.pandit_name ? data.pandit_name : ''%>"></td>
+                        <tr>
+                            <td>Image <span style="color:red;">*</span> :	</td>
+                            <td>
+                            <% if(data.image_path){ %>
+                            <img src="<%=GCP_PATH+data+image_path%>" style="width: 150px;height: 150px;"><br/>
+                           <% } %>
+                            	<input type='file' <%=!query.pandit_id ? '' : ''%> name='image_path' id='image_path'></br>(Maximum file size:100KB)<br>Allowed file types are GIF, PNG, JPG and JPEG.</td>
+                            
+                        </tr>
+                        
+                        <tr>
+                            <td>Status <span style="color:red;">*</span> :	</td>
+                            <td><select required name="pandit_status" id="pandit_status">
+                            <option value="1" <% if(data.pandit_status==1){%>selected <% } %>>Enabled</option>
+                            <option value="2" <% if(data.pandit_status==2){%>selected<% } %>>Disabled</option>
+                            </select></td>
+                        </tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<input type='submit' name='submit' id='submit' value='Submit'>	
+						</td>
+					</tr>
+				</table></div>
+			  </form>
+           </div>
+		</div>
+	</div>
+	</section>
+	<% include footer%>
+</body>
+</html>
